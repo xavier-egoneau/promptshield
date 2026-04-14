@@ -19,7 +19,8 @@ export async function runPipeline(
   const cleaned = clean(html)
 
   // 2. Extraire le contenu principal depuis le HTML déjà nettoyé.
-  const extracted = extract(cleaned.cleanedHtml)
+  //    Passer source comme baseUrl pour que Readability ait le bon domaine.
+  const extracted = extract(cleaned.cleanedHtml, source)
 
   // 3. Détecter les signaux dans le texte Readability + fusionner les signaux d'attributs.
   const textSignals = detect(extracted.textContent)

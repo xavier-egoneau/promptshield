@@ -10,6 +10,15 @@ interface OutputParams {
   risk_level: ShieldResult['risk_level']
 }
 
+/**
+ * Neutralise le tag fermant `</external_content>` s'il apparaît littéralement dans le texte.
+ * Un attaquant pourrait l'injecter pour sortir prématurément du bloc non-fiable.
+ * Le zero-width space (U+200B) brise la reconnaissance du tag sans altérer la lisibilité.
+ */
+function sanitizeForWrapping(text: string): string {
+  return text.replace(/<\/external_content>/gi, '<\u200B/external_content>')
+}
+
 function buildWrappedContent(cleanedText: string, risk_level: ShieldResult['risk_level'], signals: Signal[]): string {
   const signalTypes = [...new Set(signals.map((s) => s.type))].join(',')
   const attrs = [
@@ -17,7 +26,7 @@ function buildWrappedContent(cleanedText: string, risk_level: ShieldResult['risk
     signalTypes ? `signals="${signalTypes}"` : null,
   ].filter(Boolean).join(' ')
 
-  return `<external_content ${attrs}>\n${cleanedText}\n</external_content>`
+  return `<external_content ${attrs}>\n${sanitizeForWrapping(cleanedText)}\n</external_content>`
 }
 
 export function buildOutput(params: OutputParams): ShieldResult {

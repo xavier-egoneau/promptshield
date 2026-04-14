@@ -31,6 +31,15 @@
         "removed_types_include": ["hidden_element"],
         "cleaned_text_excludes": ["you are now dan"]
       }
+    },
+    {
+      "file": "aria-hidden-element.html",
+      "expect": {
+        "min_risk_score": 25,
+        "removed_types_include": ["hidden_element"],
+        "signals_include": ["direct_instruction"],
+        "cleaned_text_excludes": ["ignore all previous instructions"]
+      }
     }
   ]
 }

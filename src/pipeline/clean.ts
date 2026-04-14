@@ -69,7 +69,45 @@ export function clean(html: string): CleanResult {
     }
   })
 
-  // ── Éléments cachés — analyser le contenu avant suppression ─────────────────
+  // ── Éléments sémantiquement cachés (attributs HTML / classes CSS standard) ───
+
+  // Attribut HTML5 [hidden]
+  $('[hidden]').each((_, el) => {
+    const text = $(el).text().trim()
+    removed.push({ type: 'hidden_element', tag: el.tagName ?? undefined, reason: 'attribut [hidden]', content_preview: text.slice(0, 80) || undefined })
+    if (text.length > 3) {
+      const sigs = runPatterns(text, 'hidden_element')
+      if (sigs.length > 0) attrSignals.push(...sigs)
+    }
+    $(el).remove()
+  })
+
+  // aria-hidden="true" — caché pour les lecteurs d'écran et souvent invisible
+  $('[aria-hidden="true"]').each((_, el) => {
+    const text = $(el).text().trim()
+    removed.push({ type: 'hidden_element', tag: el.tagName ?? undefined, reason: 'aria-hidden="true"', content_preview: text.slice(0, 80) || undefined })
+    if (text.length > 3) {
+      const sigs = runPatterns(text, 'hidden_element')
+      if (sigs.length > 0) attrSignals.push(...sigs)
+    }
+    $(el).remove()
+  })
+
+  // Classes CSS communes de masquage (Bootstrap, Tailwind, Bulma, etc.)
+  const HIDDEN_CLASSES = ['hidden', 'd-none', 'invisible', 'sr-only', 'visually-hidden'] as const
+  for (const cls of HIDDEN_CLASSES) {
+    $(`.${cls}`).each((_, el) => {
+      const text = $(el).text().trim()
+      removed.push({ type: 'hidden_element', tag: el.tagName ?? undefined, reason: `class .${cls}`, content_preview: text.slice(0, 80) || undefined })
+      if (text.length > 3) {
+        const sigs = runPatterns(text, 'hidden_element')
+        if (sigs.length > 0) attrSignals.push(...sigs)
+      }
+      $(el).remove()
+    })
+  }
+
+  // ── Éléments cachés via style inline ─────────────────────────────────────────
   $('[style]').each((_, el) => {
     const style = $(el).attr('style') ?? ''
     const isHidden = isHiddenByStyle(style)
