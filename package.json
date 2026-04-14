@@ -1,0 +1,11 @@
+{
+  "name": "promptshield",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local middleware to reduce prompt-injection risk before external content reaches an LLM agent.",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/cli.ts",
+    "build": "tsc -p tsconfig.json"
+  }
+}
