@@ -15,6 +15,7 @@ export const DEFAULT_CONFIG: ShieldConfig = {
     role_override: 30,
     meta_instruction: 25,
     obfuscation: 30,
+    semantic: 45,
   },
 }
 

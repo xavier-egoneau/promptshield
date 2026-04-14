@@ -1,0 +1,16 @@
+{
+  "locale": "fr",
+  "name": "Français",
+  "franc_code": "fra",
+  "patterns": [
+    { "type": "direct_instruction", "source": "ignor[ez]+\\s+(toutes?\\s+)?(les?\\s+)?(instructions?|règles?)\\s+(précédentes?|antérieures?)", "flags": "iu", "label": "ignorez les instructions précédentes" },
+    { "type": "direct_instruction", "source": "oublie[z]?\\s+(toutes?\\s+)?(tes|vos|les)\\s+(instructions?|règles?)", "flags": "iu", "label": "oublie tes instructions" },
+    { "type": "direct_instruction", "source": "révèle[z]?\\s+(ton|votre)\\s+(prompt\\s+système|system\\s+prompt|configuration)", "flags": "iu", "label": "révèle ton system prompt" },
+    { "type": "role_override", "source": "tu\\s+es\\s+(maintenant|désormais)\\s+[a-zàéèêëïîôùûü]", "flags": "iu", "label": "tu es maintenant" },
+    { "type": "role_override", "source": "agis?\\s+(comme|en\\s+tant\\s+que)\\s+(un[e]?\\s+|le\\s+|la\\s+)?\\w", "flags": "iu", "label": "agis comme" },
+    { "type": "role_override", "source": "ton\\s+(nouveau\\s+)?rôle\\s+est", "flags": "iu", "label": "ton rôle est" },
+    { "type": "jailbreak", "source": "sans\\s+(aucune?\\s+)?(restriction|limite|filtre|contrainte)", "flags": "iu", "label": "sans restriction" },
+    { "type": "jailbreak", "source": "contourne[z]?\\s+(ta|votre|les?)\\s+(sécurité|filtre|protection)", "flags": "iu", "label": "contourne la sécurité" },
+    { "type": "data_exfil", "source": "envoie[z]?\\s+(ces?\\s+)?(données?|informations?|contenu)\\s+(à|via|sur)\\s+(http|email|webhook)", "flags": "iu", "label": "envoie ces données à" }
+  ]
+}

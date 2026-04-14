@@ -1,6 +1,7 @@
 import { extract } from './extract.js'
 import { clean } from './clean.js'
 import { detect } from './detect.js'
+import { semanticClassify } from './classify.js'
 import { score } from './score.js'
 import { buildOutput } from './output.js'
 import type { ShieldResult } from '../types.js'
@@ -24,9 +25,20 @@ export async function runPipeline(
 
   // 3. Détecter les signaux dans le texte Readability + fusionner les signaux d'attributs.
   const textSignals = detect(extracted.textContent)
-  const signals = [...cleaned.attrSignals, ...textSignals]
+  const heuristicSignals = [...cleaned.attrSignals, ...textSignals]
 
-  // 4. Scorer avec les poids configurables.
+  // 4. Passe sémantique optionnelle via LLM local (si PROMPTSHIELD_LLM_ENDPOINT est défini).
+  //    Point 1 — Skip si le score heuristique dépasse le seuil : le LLM n'apporte rien
+  //    quand les heuristiques ont déjà détecté une injection à haute confiance.
+  //    Seuil configurable via PROMPTSHIELD_LLM_SKIP_THRESHOLD (défaut : 50).
+  const skipThreshold = parseInt(process.env.PROMPTSHIELD_LLM_SKIP_THRESHOLD ?? '50', 10)
+  const { risk_score: heuristicScore } = score(heuristicSignals, config.signalWeights)
+  const semanticSignals =
+    heuristicScore < skipThreshold ? await semanticClassify(extracted.textContent) : []
+
+  const signals = [...heuristicSignals, ...semanticSignals]
+
+  // 5. Scorer avec les poids configurables.
   const { risk_score, risk_level } = score(signals, config.signalWeights)
 
   return buildOutput({

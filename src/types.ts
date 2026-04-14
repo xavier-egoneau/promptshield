@@ -1,5 +1,5 @@
 export interface Signal {
-  type: 'direct_instruction' | 'role_override' | 'jailbreak' | 'meta_instruction' | 'data_exfil' | 'obfuscation'
+  type: 'direct_instruction' | 'role_override' | 'jailbreak' | 'meta_instruction' | 'data_exfil' | 'obfuscation' | 'semantic'
   pattern: string
   location: 'body_text' | 'html_comment' | 'meta' | 'hidden_element'
   excerpt: string

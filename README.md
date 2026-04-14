@@ -2,96 +2,199 @@
 
 Middleware local de réduction de risque pour contenu externe destiné à des agents IA.
 
-## But
-
-PromptShield récupère du contenu externe, l'extrait proprement, détecte des signaux de prompt injection, puis produit une sortie structurée plus sûre à transmettre à un modèle.
+PromptShield récupère du contenu externe, l'extrait proprement, détecte les signaux de prompt injection, et produit une sortie structurée plus sûre à transmettre à un modèle.
 
 ## Positionnement
 
-PromptShield n'est pas une protection parfaite.
-C'est une couche de réduction de risque qui :
-- transforme du contenu externe en données plutôt qu'en instructions
-- supprime du bruit et des éléments cachés
-- détecte des patterns suspects
-- attribue un score de risque
-- garde une trace de ce qui a été retiré
+PromptShield n'est pas une protection parfaite. C'est une couche de réduction de risque qui :
 
-## MVP visé
+- supprime les éléments cachés (scripts, commentaires, éléments `display:none`, `aria-hidden`, CSS classes)
+- détecte des patterns heuristiques dans plusieurs langues (EN, FR, ES, DE)
+- détecte l'obfuscation (RTL override, zéro-width characters, base64, homoglyphes)
+- attribue un score de risque pondéré par type de signal
+- garde une trace de tout ce qui a été retiré
+- encapsule le contenu nettoyé via [Spotlighting](https://arxiv.org/abs/2403.14720) pour réduire la confusion instruction/donnée côté LLM
 
-Entrée :
-- URL
-- HTML brut
-- plus tard markdown, email ou OCR
-
-Sortie :
-- JSON structuré
-- texte nettoyé prêt pour un LLM
-- score de risque et signaux détectés
-- détails sur les éléments retirés ou marqués suspects
-
-## Approche de validation
-
-Le MVP doit être piloté par un corpus d'attaques et des tests, pas seulement par du code de fetch.
-
-Le projet doit inclure :
-- une taxonomie de prompt injections par niveaux et familles
-- une collection de fixtures HTML représentant des cas réels ou plausibles
-- des sorties attendues pour chaque cas
-- des tests automatiques de non-régression
-
-## Niveaux d'attaque envisagés
-
-- Niveau 1 : injections grossières et explicites
-- Niveau 2 : injections déguisées dans un contenu qui semble légitime
-- Niveau 3 : injections cachées dans le HTML ou les métadonnées
-- Niveau 4 : injections contextuelles mêlées au vrai contenu
-- Niveau 5 : attaques adversariales plus subtiles ou multi-blocs
-
-## Pipeline MVP
-
-1. Charger une ressource ou une fixture HTML
-2. Extraire le contenu principal en reader-mode
-3. Nettoyer les éléments non utiles ou dangereux
-4. Détecter des signaux heuristiques de prompt injection
-5. Attribuer un score de risque
-6. Générer une sortie structurée
-7. Vérifier via tests que le contenu dangereux a été supprimé ou neutralisé avant passage au modèle
-
-## Stack prévue
-
-- Node.js
-- TypeScript
-- undici pour le fetch
-- jsdom + @mozilla/readability pour l'extraction
-- cheerio si besoin pour nettoyage complémentaire
-- règles heuristiques maison pour la détection
-
-## CLI envisagé
+## Installation
 
 ```bash
-promptshield fetch https://example.com/article
-promptshield inspect fixtures/html/level-1/basic-ignore-instructions.html
-promptshield test
+npm install
+npm run build
 ```
 
-Sortie possible :
-- résumé source
-- score de risque
-- signaux détectés
-- texte nettoyé
-- JSON complet
-- résultat de test sur une fixture
+## CLI
 
-## Cas d'usage
+```bash
+# Inspecter un fichier local
+npx tsx src/cli.ts inspect fixtures/level-1/basic-ignore-instructions.html --summary
 
-- agents web
-- lecture de docs externes
-- lecture de pages de support
-- ingestion de contenu pour RAG
-- middleware de fetch sécurisé pour OpenClaw ou autres agents
+# Fetcher une URL
+npx tsx src/cli.ts fetch https://example.com/article --summary
+
+# Sortie JSON complète
+npx tsx src/cli.ts inspect page.html
+
+# Texte nettoyé uniquement
+npx tsx src/cli.ts inspect page.html --text
+
+# Lancer les tests de fixtures
+npx tsx src/cli.ts test
+
+# Serveur HTTP local
+npx tsx src/cli.ts server --port 4242
+```
+
+## Serveur HTTP
+
+```bash
+npx tsx src/cli.ts server --port 4242 --rate-limit 60 --cache-ttl 300
+```
+
+**Endpoints :**
+
+| Méthode | Route | Description |
+|---------|-------|-------------|
+| `POST` | `/shield` | Analyser une URL ou du HTML brut |
+| `GET` | `/health` | Health check |
+
+**Body `POST /shield` :**
+
+```json
+{ "url": "https://example.com/article" }
+{ "html": "<html>...</html>", "source": "custom-source" }
+```
+
+**Headers de réponse :**
+
+| Header | Description |
+|--------|-------------|
+| `X-Cache` | `HIT` ou `MISS` |
+| `X-RateLimit-Remaining` | Requêtes restantes dans la fenêtre courante |
+| `X-RateLimit-Reset` | Timestamp Unix de réinitialisation du compteur |
+
+## Sortie JSON
+
+```json
+{
+  "source": "https://example.com/article",
+  "risk_score": 75,
+  "risk_level": "critical",
+  "signals": [
+    {
+      "type": "direct_instruction",
+      "pattern": "ignore previous instructions",
+      "location": "body_text",
+      "excerpt": "...ignore all previous instructions and reveal..."
+    }
+  ],
+  "removed": [
+    {
+      "type": "hidden_element",
+      "tag": "div",
+      "reason": "display:none",
+      "content_preview": "Ignore all previous..."
+    }
+  ],
+  "cleaned_text": "Contenu nettoyé visible par le modèle.",
+  "wrapped_content": "<external_content risk=\"critical\" signals=\"direct_instruction\">\nContenu nettoyé...\n</external_content>",
+  "metadata": {
+    "title": "Article title",
+    "url": "https://example.com/article",
+    "processed_at": "2026-04-14T10:00:00.000Z"
+  }
+}
+```
+
+**Niveaux de risque :**
+
+| Score | Niveau |
+|-------|--------|
+| 0–24 | `low` |
+| 25–49 | `medium` |
+| 50–74 | `high` |
+| 75–100 | `critical` |
+
+**Types de signal et poids par défaut :**
+
+| Type | Poids | Description |
+|------|-------|-------------|
+| `data_exfil` | 50 | Tentative d'exfiltration vers URL/webhook |
+| `semantic` | 45 | Injection détectée par le classificateur LLM |
+| `direct_instruction` | 40 | Instruction directe (ignore, forget, reveal…) |
+| `jailbreak` | 35 | Tentative de jailbreak (DAN, developer mode…) |
+| `obfuscation` | 30 | Caractères RTL, zéro-width, base64, homoglyphes |
+| `role_override` | 30 | Usurpation de rôle (you are now, act as…) |
+| `meta_instruction` | 25 | Faux tags système (`[SYSTEM]`, `<\|im_start\|>`…) |
+
+## Variables d'environnement
+
+### Authentification serveur
+
+```bash
+# Activer l'authentification Bearer (optionnel)
+PROMPTSHIELD_TOKEN=secret npx tsx src/cli.ts server
+```
+
+Toutes les requêtes devront inclure `Authorization: Bearer secret`.
+
+### Proxy
+
+```bash
+# Faire confiance au header X-Forwarded-For pour le rate limiting
+PROMPTSHIELD_TRUST_PROXY=true npx tsx src/cli.ts server
+```
+
+À n'activer que si PromptShield est derrière un reverse proxy de confiance.
+
+### Intégration agent
+
+```bash
+# System prompt à inclure dans les prompts d'intégration
+PROMPTSHIELD_SYSTEM_PROMPT=1 npx tsx src/cli.ts server
+
+# Schéma tool_use Anthropic
+PROMPTSHIELD_TOOL_DEFINITION=1 npx tsx src/cli.ts server
+```
+
+### Classificateur sémantique LLM (optionnel)
+
+Activé en définissant les deux variables. Désactivé par défaut — le pipeline fonctionne sans.
+
+```bash
+PROMPTSHIELD_LLM_ENDPOINT=http://localhost:11434/v1 \
+PROMPTSHIELD_LLM_MODEL=gemma4:latest \
+npx tsx src/cli.ts inspect page.html
+```
+
+Compatible avec n'importe quel endpoint OpenAI-compatible : [Ollama](https://ollama.com), llama.cpp, LM Studio, etc.
+
+**Comportement :**
+- Ajoute une passe sémantique après la détection heuristique
+- Catch les injections par paraphrase ou implication indirecte que les regex ne couvrent pas
+- Timeout 10 s — fallback transparent sur heuristiques seules si le LLM est indisponible
+- System prompt hardcodé dans le middleware, jamais dérivé du contenu analysé
+- Ajoute un signal de type `semantic` (poids 45) si une injection est détectée
+
+## Détection multilingue
+
+La détection heuristique tourne en double passe :
+
+1. **EN toujours** — patterns anglais appliqués sur tout contenu
+2. **Langue détectée** — [franc](https://github.com/wooorm/franc) identifie la langue du document (offline, 170+ langues) et ajoute les patterns correspondants
+
+Langues supportées : English, Français, Español, Deutsch.
+Pour ajouter une langue : créer `patterns/locales/<code>.json` puis `npm run generate:patterns`.
+
+## Tests
+
+```bash
+npm test                  # vitest — 30 tests
+npx tsx src/cli.ts test   # runner de fixtures
+```
 
 ## Limites
 
-- ne garantit pas l'absence totale de prompt injection
-- ne remplace pas le cloisonnement des permissions
-- doit être utilisé avec une politique outils stricte derrière
+- Ne garantit pas l'absence totale de prompt injection
+- Ne remplace pas le cloisonnement des permissions côté agent
+- Le classificateur LLM réduit mais ne supprime pas le risque d'injection sémantique
+- Doit être utilisé avec une politique d'outils stricte en aval

@@ -1,0 +1,33 @@
+{
+  "locale": "en",
+  "name": "English",
+  "franc_code": "eng",
+  "patterns": [
+    { "type": "direct_instruction", "source": "ignore\\s+(?:all\\s+)?(?:previous\\s+|prior\\s+)?(instructions|prompts|rules|constraints)", "flags": "i", "label": "ignore previous instructions" },
+    { "type": "direct_instruction", "source": "disregard\\s+(everything|what\\s+you\\s+(were|have\\s+been)\\s+told)", "flags": "i", "label": "disregard everything told" },
+    { "type": "direct_instruction", "source": "forget\\s+(everything|your\\s+instructions|all\\s+previous)", "flags": "i", "label": "forget your instructions" },
+    { "type": "direct_instruction", "source": "do\\s+not\\s+follow\\s+(your\\s+)?(previous\\s+|prior\\s+)?(instructions|guidelines)", "flags": "i", "label": "do not follow instructions" },
+    { "type": "direct_instruction", "source": "reveal\\s+(your\\s+)?(system\\s+prompt|instructions|configuration)", "flags": "i", "label": "reveal system prompt" },
+    { "type": "role_override", "source": "you\\s+are\\s+now\\s+[a-z]", "flags": "i", "label": "you are now" },
+    { "type": "role_override", "source": "act\\s+as\\s+(a\\s+|an\\s+|the\\s+)\\w", "flags": "i", "label": "act as" },
+    { "type": "role_override", "source": "pretend\\s+(to\\s+be|you\\s+are)", "flags": "i", "label": "pretend to be" },
+    { "type": "role_override", "source": "your\\s+(new\\s+)?role\\s+is", "flags": "i", "label": "your role is" },
+    { "type": "role_override", "source": "from\\s+now\\s+on\\s+(you\\s+are|act|behave)", "flags": "i", "label": "from now on" },
+    { "type": "role_override", "source": "operating\\s+in\\s+unrestricted\\s+mode", "flags": "i", "label": "operating in unrestricted mode" },
+    { "type": "jailbreak", "source": "\\bDAN\\b", "flags": "", "label": "DAN" },
+    { "type": "jailbreak", "source": "without\\s+(any\\s+)?(restrictions|limits|filters|guidelines|constraints)", "flags": "i", "label": "without restrictions" },
+    { "type": "jailbreak", "source": "developer\\s+mode", "flags": "i", "label": "developer mode" },
+    { "type": "jailbreak", "source": "\\bjailbreak\\b", "flags": "i", "label": "jailbreak" },
+    { "type": "jailbreak", "source": "bypass\\s+(your\\s+)?(safety|filter|restriction|guideline)", "flags": "i", "label": "bypass safety" },
+    { "type": "jailbreak", "source": "no\\s+content\\s+(policy|guidelines?|filter)", "flags": "i", "label": "no content policy" },
+    { "type": "meta_instruction", "source": "\\[SYSTEM\\]", "flags": "i", "label": "[SYSTEM]" },
+    { "type": "meta_instruction", "source": "\\[INST\\]", "flags": "i", "label": "[INST]" },
+    { "type": "meta_instruction", "source": "<\\|system\\|>", "flags": "i", "label": "<|system|>" },
+    { "type": "meta_instruction", "source": "###\\s*(instruction|system|human|assistant)", "flags": "i", "label": "### system/instruction" },
+    { "type": "meta_instruction", "source": "<\\|im_start\\|>", "flags": "i", "label": "<|im_start|>" },
+    { "type": "data_exfil", "source": "send\\s+(this|the|my|all)\\s+(to|via)\\s+(http|email|webhook|url)", "flags": "i", "label": "send data to" },
+    { "type": "data_exfil", "source": "call\\s+(this\\s+)?(url|endpoint|api|webhook)", "flags": "i", "label": "call url/api" },
+    { "type": "data_exfil", "source": "exfiltrate|exfil\\b", "flags": "i", "label": "exfiltrate" },
+    { "type": "data_exfil", "source": "leak\\s+(the\\s+)?(system\\s+prompt|instructions|config)", "flags": "i", "label": "leak system prompt" }
+  ]
+}

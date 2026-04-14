@@ -41,13 +41,6 @@ Construire un middleware local qui transforme du contenu web non fiable en conte
 - [x] Remplacer ou précéder le fetch web brut
 - [x] Ajouter traces d'audit et zones retirées
 
-## Phase 5 - Produit
-
-- [ ] Définir packaging propre (npm publish, types exports)
-- [ ] Prévoir config par politique (fichier promptshield.config.ts)
-- [ ] Ajouter support markdown, email, OCR, HTML brut
-- [ ] Explorer une UI légère si utile
-
 ## Phase 6 - Mesurabilité et serveur production-ready (fait)
 
 - [x] Benchmark sur corpus réel (25 URLs) — precision/recall/F1
@@ -61,3 +54,15 @@ Construire un middleware local qui transforme du contenu web non fiable en conte
 - [x] `PROMPTSHIELD_SYSTEM_PROMPT` — system prompt d'intégration agent
 - [x] `PROMPTSHIELD_TOOL_DEFINITION` — schéma Anthropic tool_use
 - [x] `prompts/system-prompt.md` — guide d'intégration lisible
+
+## Phase 7 - Classificateur sémantique LLM (optionnel)
+
+- [x] Type signal `semantic` ajouté (poids 45)
+- [x] `src/pipeline/classify.ts` — appel OpenAI-compatible (ollama, llama.cpp, LM Studio…)
+- [x] `PROMPTSHIELD_LLM_ENDPOINT` + `PROMPTSHIELD_LLM_MODEL` pour activer la passe sémantique
+- [x] Désactivé par défaut — retourne `[]` sans les variables d'environnement
+- [x] Timeout 10 s + fallback gracieux sur heuristiques seules (erreur réseau, JSON invalide, HTTP 5xx)
+- [x] System prompt hardcodé, jamais dérivé du contenu web
+- [x] Output contraint `{"injection": bool, "reason": "..."}` pour réduire la surface d'attaque
+- [x] Tests vitest avec mock undici (7 cas : désactivé, injection, propre, HTTP 5xx, réseau, JSON invalide, endpoint)
+- [x] Mention dans README

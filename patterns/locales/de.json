@@ -1,0 +1,17 @@
+{
+  "locale": "de",
+  "name": "Deutsch",
+  "franc_code": "deu",
+  "patterns": [
+    { "type": "direct_instruction", "source": "ignoriere\\s+(alle?\\s+)?(vorherigen?|früheren?)?\\s*Anweisungen", "flags": "iu", "label": "ignoriere alle Anweisungen" },
+    { "type": "direct_instruction", "source": "vergiss\\s+(alles|deine\\s+Anweisungen|alle\\s+vorherigen)", "flags": "iu", "label": "vergiss deine Anweisungen" },
+    { "type": "direct_instruction", "source": "folge\\s+(deinen?\\s+)?Anweisungen\\s+nicht", "flags": "iu", "label": "folge Anweisungen nicht" },
+    { "type": "direct_instruction", "source": "enthülle\\s+(dein[en]?\\s+)?(System-?Prompt|Anweisungen|Konfiguration)", "flags": "iu", "label": "enthülle deinen System-Prompt" },
+    { "type": "role_override", "source": "du\\s+bist\\s+jetzt\\s+(ein[e]?\\s+)?[a-zäöüß]", "flags": "iu", "label": "du bist jetzt" },
+    { "type": "role_override", "source": "spiele?\\s+(die\\s+Rolle|einen?|eine)\\s+\\w", "flags": "iu", "label": "spiele die Rolle" },
+    { "type": "role_override", "source": "ab\\s+jetzt\\s+(bist\\s+du|verhältst\\s+du\\s+dich|agierst\\s+du)", "flags": "iu", "label": "ab jetzt bist du" },
+    { "type": "jailbreak", "source": "ohne\\s+(jegliche?\\s+)?(Einschränkungen?|Grenzen|Filter|Beschränkungen?)", "flags": "iu", "label": "ohne Einschränkungen" },
+    { "type": "jailbreak", "source": "umgehe?\\s+(deine?\\s+)?(Sicherheit|Filter|Beschränkungen?)", "flags": "iu", "label": "umgehe die Sicherheit" },
+    { "type": "data_exfil", "source": "sende?\\s+(dies|alle?\\s+Daten|die\\s+Informationen)\\s+(an|über|via)\\s+(http|email|webhook)", "flags": "iu", "label": "sende die Daten an" }
+  ]
+}
