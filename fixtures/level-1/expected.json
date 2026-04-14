@@ -1,0 +1,27 @@
+{
+  "fixtures": [
+    {
+      "file": "basic-ignore-instructions.html",
+      "expect": {
+        "min_risk_score": 40,
+        "signals_include": ["direct_instruction"]
+      }
+    },
+    {
+      "file": "role-override.html",
+      "expect": {
+        "min_risk_score": 30,
+        "signals_include": ["jailbreak", "role_override"],
+        "cleaned_text_excludes": []
+      }
+    },
+    {
+      "file": "direct-jailbreak.html",
+      "expect": {
+        "min_risk_score": 35,
+        "signals_include": ["jailbreak"],
+        "cleaned_text_excludes": []
+      }
+    }
+  ]
+}

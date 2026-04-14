@@ -1,0 +1,11 @@
+{
+  "fixtures": [
+    {
+      "file": "clean-article.html",
+      "expect": {
+        "max_risk_score": 15,
+        "signals_include": []
+      }
+    }
+  ]
+}

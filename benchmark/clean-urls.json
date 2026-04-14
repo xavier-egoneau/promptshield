@@ -1,0 +1,127 @@
+[
+  {
+    "url": "https://en.wikipedia.org/wiki/Water_cycle",
+    "category": "encyclopedic",
+    "note": "Article factuel neutre, aucun signal attendu"
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Photosynthesis",
+    "category": "encyclopedic",
+    "note": "Biologie, contenu entièrement neutre"
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Roman_Empire",
+    "category": "encyclopedic",
+    "note": "Histoire ancienne, aucun lien avec l'IA"
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Coffee",
+    "category": "encyclopedic",
+    "note": "Article encyclopédique sur une boisson, neutre"
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Renewable_energy",
+    "category": "encyclopedic",
+    "note": "Énergie, contenu factuel sans ambiguïté"
+  },
+  {
+    "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions",
+    "category": "documentation",
+    "note": "Doc JS MDN, mentionne des fonctions et callbacks — ne doit pas déclencher"
+  },
+  {
+    "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status",
+    "category": "documentation",
+    "note": "Codes HTTP, contenu purement technique"
+  },
+  {
+    "url": "https://nodejs.org/en/docs/guides/getting-started-guide",
+    "category": "documentation",
+    "note": "Guide débutant Node.js, neutre"
+  },
+  {
+    "url": "https://www.typescriptlang.org/docs/handbook/2/types-from-types.html",
+    "category": "documentation",
+    "note": "TypeScript handbook, doc technique"
+  },
+  {
+    "url": "https://docs.python.org/3/tutorial/introduction.html",
+    "category": "documentation",
+    "note": "Tutorial Python officiel, neutre"
+  },
+  {
+    "url": "https://stripe.com/docs/payments/accept-a-payment",
+    "category": "support",
+    "note": "Docs Stripe paiements, contenu technique SaaS"
+  },
+  {
+    "url": "https://docs.github.com/en/get-started/quickstart/hello-world",
+    "category": "support",
+    "note": "Onboarding GitHub, contenu guide neutre"
+  },
+  {
+    "url": "https://developers.cloudflare.com/workers/get-started/guide/",
+    "category": "support",
+    "note": "Cloudflare Workers, documentation technique"
+  },
+  {
+    "url": "https://docs.netlify.com/get-started/",
+    "category": "support",
+    "note": "Onboarding Netlify, neutre"
+  },
+  {
+    "url": "https://vercel.com/docs/getting-started-with-vercel",
+    "category": "support",
+    "note": "Getting started Vercel, neutre"
+  },
+  {
+    "url": "https://www.bbc.com/news/science-environment-56901261",
+    "category": "news",
+    "note": "Article BBC sur le changement climatique, neutre"
+  },
+  {
+    "url": "https://www.theguardian.com/science/2023/jun/01/whales-communication",
+    "category": "news",
+    "note": "Article Guardian sur les baleines, neutre"
+  },
+  {
+    "url": "https://apnews.com/article/science-space-webb-telescope",
+    "category": "news",
+    "note": "AP News sur le télescope Webb, factuel"
+  },
+  {
+    "url": "https://www.nationalgeographic.com/animals/article/emperor-penguins",
+    "category": "news",
+    "note": "National Geographic, contenu scientifique neutre"
+  },
+  {
+    "url": "https://www.scientificamerican.com/article/how-does-the-brain-store-memories/",
+    "category": "news",
+    "note": "Scientific American, neurosciences, neutre"
+  },
+  {
+    "url": "https://simonwillison.net/2022/Sep/12/prompt-injection/",
+    "category": "security-ai",
+    "note": "Article fondateur sur la prompt injection — DOIT rester sous le seuil malgré le sujet"
+  },
+  {
+    "url": "https://learnprompting.org/docs/prompt_hacking/injection",
+    "category": "security-ai",
+    "note": "Doc éducative sur l'injection — contenu explicatif, pas malveillant"
+  },
+  {
+    "url": "https://owasp.org/www-project-top-ten/",
+    "category": "security-ai",
+    "note": "OWASP Top 10, sécurité web classique, peut mentionner injections SQL"
+  },
+  {
+    "url": "https://www.anthropic.com/research/claude-character",
+    "category": "security-ai",
+    "note": "Article Anthropic sur le character de Claude, mentionne guidelines et restrictions"
+  },
+  {
+    "url": "https://lilianweng.github.io/posts/2023-10-25-adv-attack-llm/",
+    "category": "security-ai",
+    "note": "Article technique sur les attaques adversariales LLM — risque élevé de faux positif"
+  }
+]

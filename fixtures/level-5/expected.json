@@ -1,0 +1,32 @@
+{
+  "fixtures": [
+    {
+      "file": "unicode-homoglyph.html",
+      "expect": {
+        "min_risk_score": 25,
+        "signals_include": ["direct_instruction"]
+      }
+    },
+    {
+      "file": "zero-width-chars.html",
+      "expect": {
+        "min_risk_score": 25,
+        "signals_include": ["direct_instruction"]
+      }
+    },
+    {
+      "file": "rtl-override.html",
+      "expect": {
+        "min_risk_score": 20,
+        "signals_include": ["obfuscation"]
+      }
+    },
+    {
+      "file": "base64-encoded.html",
+      "expect": {
+        "min_risk_score": 20,
+        "signals_include": ["obfuscation"]
+      }
+    }
+  ]
+}

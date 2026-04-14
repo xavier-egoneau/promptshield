@@ -1,0 +1,32 @@
+{
+  "fixtures": [
+    {
+      "file": "injection-in-blockquote.html",
+      "expect": {
+        "min_risk_score": 30,
+        "signals_include": ["direct_instruction", "role_override"]
+      }
+    },
+    {
+      "file": "injection-in-jsonld.html",
+      "expect": {
+        "min_risk_score": 30,
+        "signals_include": ["direct_instruction"]
+      }
+    },
+    {
+      "file": "injection-in-alt-attribute.html",
+      "expect": {
+        "min_risk_score": 30,
+        "signals_include": ["direct_instruction"]
+      }
+    },
+    {
+      "file": "injection-in-aria-label.html",
+      "expect": {
+        "min_risk_score": 25,
+        "signals_include": ["role_override", "jailbreak"]
+      }
+    }
+  ]
+}

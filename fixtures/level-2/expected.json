@@ -1,0 +1,20 @@
+{
+  "fixtures": [
+    {
+      "file": "disguised-in-article.html",
+      "expect": {
+        "min_risk_score": 25,
+        "signals_include": ["direct_instruction", "role_override"],
+        "cleaned_text_excludes": []
+      }
+    },
+    {
+      "file": "fake-system-prompt.html",
+      "expect": {
+        "min_risk_score": 25,
+        "signals_include": ["meta_instruction", "role_override"],
+        "cleaned_text_excludes": []
+      }
+    }
+  ]
+}

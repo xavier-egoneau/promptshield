@@ -6,44 +6,58 @@ Construire un middleware local qui transforme du contenu web non fiable en conte
 
 ## Phase 1 - Corpus et protocole de test
 
-- [ ] Définir une taxonomie de prompt injections par niveaux et familles
-- [ ] Créer une arborescence de fixtures HTML
-- [ ] Ajouter des cas de base niveau 1 à 3
-- [ ] Définir un format `expected.json` pour les sorties attendues
-- [ ] Mettre en place des tests automatiques de non-régression
-- [ ] Vérifier que le contenu dangereux ne ressort pas dans la sortie destinée au modèle
+- [x] Définir une taxonomie de prompt injections par niveaux et familles
+- [x] Créer une arborescence de fixtures HTML
+- [x] Ajouter des cas de base niveau 1 à 3
+- [x] Définir un format `expected.json` pour les sorties attendues
+- [x] Mettre en place des tests automatiques de non-régression
+- [x] Vérifier que le contenu dangereux ne ressort pas dans la sortie destinée au modèle
 
 ## Phase 2 - MVP CLI
 
-- [ ] Ajouter commande CLI `promptshield fetch <url>`
-- [ ] Ajouter commande CLI `promptshield inspect <file>`
-- [ ] Ajouter commande CLI `promptshield test`
-- [ ] Implémenter fetch HTTP
-- [ ] Extraire le contenu principal avec Readability
-- [ ] Nettoyer scripts, styles, commentaires, éléments cachés simples
-- [ ] Détecter signaux heuristiques de prompt injection
-- [ ] Produire un score de risque simple
-- [ ] Retourner un JSON structuré
-- [ ] Ajouter un mode texte nettoyé
+- [x] Ajouter commande CLI `promptshield fetch <url>`
+- [x] Ajouter commande CLI `promptshield inspect <file>`
+- [x] Ajouter commande CLI `promptshield test`
+- [x] Implémenter fetch HTTP
+- [x] Extraire le contenu principal avec Readability
+- [x] Nettoyer scripts, styles, commentaires, éléments cachés simples
+- [x] Détecter signaux heuristiques de prompt injection
+- [x] Produire un score de risque simple
+- [x] Retourner un JSON structuré
+- [x] Ajouter un mode texte nettoyé
 
 ## Phase 3 - Qualité de détection
 
-- [ ] Enrichir les heuristiques
-- [ ] Ajouter une liste de signaux et une pondération configurable
-- [ ] Différencier contenu légitime et contenu suspect
-- [ ] Ajouter des cas niveau 4 et 5
-- [ ] Ajouter des fixtures adversariales et ambiguës
+- [x] Enrichir les heuristiques
+- [x] Ajouter une liste de signaux et une pondération configurable
+- [x] Différencier contenu légitime et contenu suspect
+- [x] Ajouter des cas niveau 4 et 5
+- [x] Ajouter des fixtures adversariales et ambiguës
 
 ## Phase 4 - Intégration agent
 
-- [ ] Exposer une API locale
-- [ ] Prévoir un tool ou plugin OpenClaw
-- [ ] Remplacer ou précéder le fetch web brut
-- [ ] Ajouter traces d'audit et zones retirées
+- [x] Exposer une API locale
+- [x] Prévoir un tool ou plugin OpenClaw
+- [x] Remplacer ou précéder le fetch web brut
+- [x] Ajouter traces d'audit et zones retirées
 
 ## Phase 5 - Produit
 
-- [ ] Définir packaging propre
-- [ ] Prévoir config par politique
+- [ ] Définir packaging propre (npm publish, types exports)
+- [ ] Prévoir config par politique (fichier promptshield.config.ts)
 - [ ] Ajouter support markdown, email, OCR, HTML brut
 - [ ] Explorer une UI légère si utile
+
+## Phase 6 - Mesurabilité et serveur production-ready (fait)
+
+- [x] Benchmark sur corpus réel (25 URLs) — precision/recall/F1
+- [x] `benchmark/clean-urls.json` — 5 catégories de vraies pages
+- [x] `promptshield benchmark crawl` — crawler et sauvegarder snapshots HTML
+- [x] `promptshield benchmark run` — pipeline complet + métriques
+- [x] Serveur HTTP production-ready : auth Bearer, rate limiting par IP, cache LRU, logs JSON structurés
+- [x] `PROMPTSHIELD_TOKEN` pour authentification optionnelle
+- [x] Headers `X-Cache`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`
+- [x] `wrapped_content` — Spotlighting (encapsulation `<external_content>`)
+- [x] `PROMPTSHIELD_SYSTEM_PROMPT` — system prompt d'intégration agent
+- [x] `PROMPTSHIELD_TOOL_DEFINITION` — schéma Anthropic tool_use
+- [x] `prompts/system-prompt.md` — guide d'intégration lisible

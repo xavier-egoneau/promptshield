@@ -1,0 +1,36 @@
+{
+  "fixtures": [
+    {
+      "file": "hidden-div.html",
+      "expect": {
+        "min_risk_score": 10,
+        "removed_types_include": ["hidden_element"],
+        "cleaned_text_excludes": ["ignore all previous instructions"]
+      }
+    },
+    {
+      "file": "html-comment-injection.html",
+      "expect": {
+        "min_risk_score": 15,
+        "removed_types_include": ["comment"],
+        "cleaned_text_excludes": []
+      }
+    },
+    {
+      "file": "zero-size-text.html",
+      "expect": {
+        "min_risk_score": 10,
+        "removed_types_include": ["hidden_element"],
+        "cleaned_text_excludes": ["ignore all previous instructions"]
+      }
+    },
+    {
+      "file": "white-on-white.html",
+      "expect": {
+        "min_risk_score": 10,
+        "removed_types_include": ["hidden_element"],
+        "cleaned_text_excludes": ["you are now dan"]
+      }
+    }
+  ]
+}
