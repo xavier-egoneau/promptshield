@@ -44,12 +44,22 @@ export interface Metrics {
   f1: number
 }
 
+export interface ThresholdRow {
+  threshold: number
+  precision: number
+  recall: number
+  f1: number
+  fp: number
+  fn: number
+}
+
 export interface BenchmarkResult {
   timestamp: string
   threshold: number
   corpus_clean: CleanPageResult[]
   corpus_inject: InjectPageResult[]
   metrics: Metrics
+  sensitivity: ThresholdRow[]
 }
 
 function computeMetrics(
@@ -152,12 +162,38 @@ export async function runBenchmark(
 
   const metrics = computeMetrics(corpus_clean, corpus_inject, threshold)
 
+  // ── Sensitivity analysis — sweep sur plusieurs thresholds ────────────────────
+
+  const SWEEP_THRESHOLDS = [5, 10, 15, 20, 25, 30, 35, 40, 50, 60, 75]
+
+  function computeAtThreshold(t: number): ThresholdRow {
+    const fpCount = corpus_clean.filter((p) => p.risk_score >= t).length
+    const tpCount = corpus_inject.filter((p) => p.risk_score >= t).length
+    const fnCount = corpus_inject.filter((p) => p.risk_score < t).length
+
+    const precision = tpCount + fpCount > 0 ? tpCount / (tpCount + fpCount) : 1
+    const recall = tpCount + fnCount > 0 ? tpCount / (tpCount + fnCount) : 0
+    const f1 = precision + recall > 0 ? (2 * precision * recall) / (precision + recall) : 0
+
+    return {
+      threshold: t,
+      precision: Math.round(precision * 1000) / 1000,
+      recall: Math.round(recall * 1000) / 1000,
+      f1: Math.round(f1 * 1000) / 1000,
+      fp: fpCount,
+      fn: fnCount,
+    }
+  }
+
+  const sensitivity: ThresholdRow[] = SWEEP_THRESHOLDS.map(computeAtThreshold)
+
   const benchResult: BenchmarkResult = {
     timestamp: new Date().toISOString(),
     threshold,
     corpus_clean,
     corpus_inject,
     metrics,
+    sensitivity,
   }
 
   // ── Sauvegarde ───────────────────────────────────────────────────────────────

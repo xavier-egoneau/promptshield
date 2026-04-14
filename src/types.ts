@@ -45,7 +45,6 @@ export interface ExtractResult {
 
 export interface CleanResult {
   cleanedHtml: string
-  cleanedText: string
   removed: RemovedElement[]
   attrSignals: Signal[]
 }

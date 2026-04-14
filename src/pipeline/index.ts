@@ -26,7 +26,7 @@ export async function runPipeline(
   const signals = [...cleaned.attrSignals, ...textSignals]
 
   // 4. Scorer avec les poids configurables.
-  const { risk_score, risk_level } = score(signals, cleaned.removed, config.signalWeights)
+  const { risk_score, risk_level } = score(signals, config.signalWeights)
 
   return buildOutput({
     source,

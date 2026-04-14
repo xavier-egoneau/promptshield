@@ -1,4 +1,4 @@
-import type { BenchmarkResult } from './run.js'
+import type { BenchmarkResult, ThresholdRow } from './run.js'
 
 function pct(rate: number): string {
   return `${Math.round(rate * 100)}%`
@@ -72,5 +72,24 @@ export function printReport(result: BenchmarkResult): void {
   } else {
     console.log('  Verdict : ✗ Insuffisant (F1 < 60%) — révision nécessaire')
   }
+
+  // ── Sensitivity analysis ─────────────────────────────────
+  if (result.sensitivity && result.sensitivity.length > 0) {
+    console.log('\nSensitivity Analysis (threshold sweep)')
+    console.log('  Threshold │ Precision │ Recall │  F1   │ FP │ FN')
+    console.log('  ──────────┼───────────┼────────┼───────┼────┼────')
+    for (const row of result.sensitivity) {
+      const isCurrent = row.threshold === metrics.threshold
+      const marker = isCurrent ? ' ◄' : '  '
+      const t = String(row.threshold).padStart(5)
+      const p = pct(row.precision).padStart(6)
+      const r = pct(row.recall).padStart(6)
+      const f = pct(row.f1).padStart(6)
+      const fp = String(row.fp).padStart(3)
+      const fn = String(row.fn).padStart(3)
+      console.log(`    ${t}     │  ${p}   │  ${r} │ ${f} │${fp} │${fn}${marker}`)
+    }
+  }
+
   console.log('')
 }

@@ -100,8 +100,10 @@ function readBody(req: IncomingMessage): Promise<string> {
 }
 
 function getIP(req: IncomingMessage): string {
-  const forwarded = req.headers['x-forwarded-for']
-  if (typeof forwarded === 'string') return forwarded.split(',')[0].trim()
+  if (process.env['PROMPTSHIELD_TRUST_PROXY'] === 'true') {
+    const forwarded = req.headers['x-forwarded-for']
+    if (typeof forwarded === 'string') return forwarded.split(',')[0].trim()
+  }
   return req.socket.remoteAddress ?? '0.0.0.0'
 }
 
@@ -200,6 +202,9 @@ export function createShieldServer(opts: ServerOptions = {}): ReturnType<typeof 
 
   if (!token) {
     console.warn('[warn] PROMPTSHIELD_TOKEN not set — running unauthenticated')
+  }
+  if (process.env['PROMPTSHIELD_TRUST_PROXY'] !== 'true') {
+    console.warn('[warn] PROMPTSHIELD_TRUST_PROXY not set — X-Forwarded-For ignored (safe default)')
   }
 
   const server = createServer(async (req, res) => {

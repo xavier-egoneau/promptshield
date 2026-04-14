@@ -22,6 +22,13 @@
         "signals_include": ["jailbreak"],
         "cleaned_text_excludes": []
       }
+    },
+    {
+      "file": "fr-direct-instruction.html",
+      "expect": {
+        "min_risk_score": 40,
+        "signals_include": ["direct_instruction"]
+      }
     }
   ]
 }

@@ -7,7 +7,7 @@ interface PatternDef {
 }
 
 const PATTERNS: PatternDef[] = [
-  // direct_instruction
+  // direct_instruction (EN)
   {
     type: 'direct_instruction',
     pattern: /ignore\s+(?:all\s+)?(?:previous\s+|prior\s+)?(instructions|prompts|rules|constraints)/i,
@@ -33,7 +33,23 @@ const PATTERNS: PatternDef[] = [
     pattern: /reveal\s+(your\s+)?(system\s+prompt|instructions|configuration)/i,
     label: 'reveal system prompt',
   },
-  // role_override
+  // direct_instruction (FR)
+  {
+    type: 'direct_instruction',
+    pattern: /ignor[ez]+\s+(toutes?\s+)?(les?\s+)?(instructions?|règles?)\s+(précédentes?|antérieures?)/i,
+    label: 'ignorez les instructions précédentes',
+  },
+  {
+    type: 'direct_instruction',
+    pattern: /oublie[z]?\s+(toutes?\s+)?(tes|vos|les)\s+(instructions?|règles?)/i,
+    label: 'oublie tes instructions',
+  },
+  {
+    type: 'direct_instruction',
+    pattern: /révèle[z]?\s+(ton|votre)\s+(prompt\s+système|system\s+prompt|configuration)/i,
+    label: 'révèle ton system prompt',
+  },
+  // role_override (EN)
   {
     type: 'role_override',
     pattern: /you\s+are\s+now\s+[a-z]/i,
@@ -64,7 +80,23 @@ const PATTERNS: PatternDef[] = [
     pattern: /operating\s+in\s+unrestricted\s+mode/i,
     label: 'operating in unrestricted mode',
   },
-  // jailbreak
+  // role_override (FR)
+  {
+    type: 'role_override',
+    pattern: /tu\s+es\s+(maintenant|désormais)\s+[a-zàéèêëïîôùûü]/i,
+    label: 'tu es maintenant',
+  },
+  {
+    type: 'role_override',
+    pattern: /agis?\s+(comme|en\s+tant\s+que)\s+(un[e]?\s+|le\s+|la\s+)?\w/i,
+    label: 'agis comme',
+  },
+  {
+    type: 'role_override',
+    pattern: /ton\s+(nouveau\s+)?rôle\s+est/i,
+    label: 'ton rôle est',
+  },
+  // jailbreak (EN)
   {
     type: 'jailbreak',
     pattern: /\bDAN\b/,
@@ -95,6 +127,17 @@ const PATTERNS: PatternDef[] = [
     pattern: /no\s+content\s+(policy|guidelines?|filter)/i,
     label: 'no content policy',
   },
+  // jailbreak (FR)
+  {
+    type: 'jailbreak',
+    pattern: /sans\s+(aucune?\s+)?(restriction|limite|filtre|contrainte)/i,
+    label: 'sans restriction',
+  },
+  {
+    type: 'jailbreak',
+    pattern: /contourne[z]?\s+(ta|votre|les?)\s+(sécurité|filtre|protection)/i,
+    label: 'contourne la sécurité',
+  },
   // meta_instruction
   {
     type: 'meta_instruction',
@@ -121,7 +164,7 @@ const PATTERNS: PatternDef[] = [
     pattern: /<\|im_start\|>/i,
     label: '<|im_start|>',
   },
-  // data_exfil
+  // data_exfil (EN)
   {
     type: 'data_exfil',
     pattern: /send\s+(this|the|my|all)\s+(to|via)\s+(http|email|webhook|url)/i,
@@ -142,47 +185,30 @@ const PATTERNS: PatternDef[] = [
     pattern: /leak\s+(the\s+)?(system\s+prompt|instructions|config)/i,
     label: 'leak system prompt',
   },
+  // data_exfil (FR)
+  {
+    type: 'data_exfil',
+    pattern: /envoie[z]?\s+(ces?\s+)?(données?|informations?|contenu)\s+(à|via|sur)\s+(http|email|webhook)/i,
+    label: 'envoie ces données à',
+  },
 ]
 
-// Caractères zero-width qui servent à dissimuler du texte
+// ─── Utilitaires de normalisation ─────────────────────────────────────────────
+
 const ZERO_WIDTH_CHARS = /[\u200B\u200C\u200D\u2060\uFEFF\u00AD]/g
-
-// RTL override (U+202E) — retourne l'ordre visuel du texte
 const RTL_OVERRIDE = /\u202E/
-
-// Base64 blocks suffisamment longs pour contenir une instruction cachée (≥ 40 chars)
 const BASE64_BLOCK = /[A-Za-z0-9+/]{40,}={0,2}/g
 
-// Table de translittération des homoglyphes Cyrilliques → Latin les plus courants
 const HOMOGLYPH_MAP: Record<string, string> = {
-  '\u0430': 'a', // а → a
-  '\u0435': 'e', // е → e
-  '\u043E': 'o', // о → o
-  '\u0440': 'r', // р → r
-  '\u0441': 'c', // с → c
-  '\u0443': 'u', // у → u
-  '\u0445': 'x', // х → x
-  '\u0456': 'i', // і → i
-  '\u0406': 'I', // І → I
-  '\u04CF': 'i', // ӏ → l/i
-  '\u0410': 'A', // А → A
-  '\u0412': 'B', // В → B
-  '\u0415': 'E', // Е → E
-  '\u041A': 'K', // К → K
-  '\u041C': 'M', // М → M
-  '\u041D': 'H', // Н → H
-  '\u041E': 'O', // О → O
-  '\u0420': 'P', // Р → P
-  '\u0421': 'C', // С → C
-  '\u0422': 'T', // Т → T
-  '\u0425': 'X', // Х → X
+  '\u0430': 'a', '\u0435': 'e', '\u043E': 'o', '\u0440': 'r', '\u0441': 'c',
+  '\u0443': 'u', '\u0445': 'x', '\u0456': 'i', '\u0406': 'I', '\u04CF': 'i',
+  '\u0410': 'A', '\u0412': 'B', '\u0415': 'E', '\u041A': 'K', '\u041C': 'M',
+  '\u041D': 'H', '\u041E': 'O', '\u0420': 'P', '\u0421': 'C', '\u0422': 'T',
+  '\u0425': 'X',
 }
 
 function normalizeHomoglyphs(text: string): string {
-  return text
-    .split('')
-    .map((c) => HOMOGLYPH_MAP[c] ?? c)
-    .join('')
+  return text.split('').map((c) => HOMOGLYPH_MAP[c] ?? c).join('')
 }
 
 function stripZeroWidth(text: string): string {
@@ -192,8 +218,7 @@ function stripZeroWidth(text: string): string {
 function excerpt(text: string, match: RegExpExecArray): string {
   const start = Math.max(0, match.index - 30)
   const end = Math.min(text.length, match.index + match[0].length + 50)
-  const raw = text.slice(start, end).replace(/\s+/g, ' ').trim()
-  return raw.slice(0, 120)
+  return text.slice(start, end).replace(/\s+/g, ' ').trim().slice(0, 120)
 }
 
 function decodeBase64Safe(b64: string): string | null {
@@ -204,11 +229,66 @@ function decodeBase64Safe(b64: string): string | null {
   }
 }
 
+// ─── Détection d'obfuscation ───────────────────────────────────────────────────
+
 /**
- * Applique les patterns heuristiques sur un texte et retourne les signaux trouvés.
- * Peut être appelé depuis clean.ts pour analyser le contenu des éléments supprimés.
+ * Détecte les techniques d'obfuscation : RTL override, zero-width chars, base64.
+ * Émet un signal uniquement si le contenu base64 décodé contient une injection.
+ * Appelé depuis runPatterns() — s'applique donc à tous les contextes (body, éléments cachés, commentaires…).
  */
-export function runPatterns(text: string, location: Signal['location']): Signal[] {
+function detectObfuscation(text: string, location: Signal['location']): Signal[] {
+  const signals: Signal[] = []
+
+  if (RTL_OVERRIDE.test(text)) {
+    signals.push({
+      type: 'obfuscation',
+      pattern: 'RTL override character (U+202E)',
+      location,
+      excerpt: text.replace(/\s+/g, ' ').trim().slice(0, 120),
+    })
+  }
+
+  if (ZERO_WIDTH_CHARS.test(text)) {
+    signals.push({
+      type: 'obfuscation',
+      pattern: 'zero-width characters',
+      location,
+      excerpt: text.replace(/\s+/g, ' ').trim().slice(0, 120),
+    })
+  }
+
+  // Base64 : signal uniquement si le contenu décodé contient une injection
+  for (const match of text.matchAll(new RegExp(BASE64_BLOCK.source, 'g'))) {
+    const decoded = decodeBase64Safe(match[0])
+    if (!decoded || decoded.length <= 10 || !/[a-z]{3,}/i.test(decoded)) continue
+
+    for (const { type, pattern, label } of PATTERNS) {
+      const re = new RegExp(pattern.source, pattern.flags)
+      const m = re.exec(decoded)
+      if (m) {
+        signals.push({
+          type: 'obfuscation',
+          pattern: `base64 block (decoded: "${decoded.slice(0, 60)}")`,
+          location,
+          excerpt: match[0].slice(0, 60),
+        })
+        signals.push({
+          type,
+          pattern: `${label} (base64-encoded)`,
+          location,
+          excerpt: decoded.slice(0, 120),
+        })
+        break
+      }
+    }
+  }
+
+  return signals
+}
+
+// ─── Correspondance de patterns heuristiques ──────────────────────────────────
+
+function runPatternMatching(text: string, location: Signal['location']): Signal[] {
   const signals: Signal[] = []
   const normalized = normalizeHomoglyphs(stripZeroWidth(text))
   for (const { type, pattern, label } of PATTERNS) {
@@ -221,76 +301,24 @@ export function runPatterns(text: string, location: Signal['location']): Signal[
   return signals
 }
 
+// ─── API publique ──────────────────────────────────────────────────────────────
+
+/**
+ * Applique la détection complète (obfuscation + patterns heuristiques) sur un texte.
+ * Peut être appelé depuis clean.ts pour analyser le contenu des éléments supprimés,
+ * des commentaires HTML, des attributs, du JSON-LD, etc.
+ */
+export function runPatterns(text: string, location: Signal['location']): Signal[] {
+  return [
+    ...detectObfuscation(text, location),
+    ...runPatternMatching(text, location),
+  ]
+}
+
+/**
+ * Point d'entrée principal pour le texte extrait par Readability.
+ * Composition de detectObfuscation + runPatternMatching sur 'body_text'.
+ */
 export function detect(rawText: string): Signal[] {
-  const signals: Signal[] = []
-
-  // 1. Détecter le RTL override avant toute normalisation
-  if (RTL_OVERRIDE.test(rawText)) {
-    signals.push({
-      type: 'obfuscation',
-      pattern: 'RTL override character (U+202E)',
-      location: 'body_text',
-      excerpt: rawText.replace(/\s+/g, ' ').trim().slice(0, 120),
-    })
-  }
-
-  // 2. Détecter les zero-width chars (hors RTL override déjà traité)
-  if (ZERO_WIDTH_CHARS.test(rawText)) {
-    signals.push({
-      type: 'obfuscation',
-      pattern: 'zero-width characters',
-      location: 'body_text',
-      excerpt: rawText.replace(/\s+/g, ' ').trim().slice(0, 120),
-    })
-  }
-
-  // 3. Détecter et tenter de décoder les blocs base64
-  const base64Matches = [...rawText.matchAll(BASE64_BLOCK)]
-  for (const match of base64Matches) {
-    const decoded = decodeBase64Safe(match[0])
-    if (decoded && decoded.length > 10 && /[a-z]{3,}/i.test(decoded)) {
-      // Vérifier si le contenu décodé est suspect
-      const isInstructionDecoded = PATTERNS.some((p) => p.pattern.test(decoded))
-      signals.push({
-        type: 'obfuscation',
-        pattern: `base64 block (decoded: "${decoded.slice(0, 60)}")`,
-        location: 'body_text',
-        excerpt: match[0].slice(0, 60),
-      })
-      if (isInstructionDecoded) {
-        // Ajouter aussi le signal d'injection sur le texte décodé
-        for (const { type, pattern, label } of PATTERNS) {
-          const re = new RegExp(pattern.source, pattern.flags)
-          const m = re.exec(decoded)
-          if (m) {
-            signals.push({
-              type,
-              pattern: `${label} (base64-encoded)`,
-              location: 'body_text',
-              excerpt: decoded.slice(0, 120),
-            })
-            break
-          }
-        }
-      }
-    }
-  }
-
-  // 4. Normaliser : retirer zero-width, normaliser homoglyphes, puis appliquer les patterns
-  const normalized = normalizeHomoglyphs(stripZeroWidth(rawText))
-
-  for (const { type, pattern, label } of PATTERNS) {
-    const re = new RegExp(pattern.source, pattern.flags)
-    const match = re.exec(normalized)
-    if (match) {
-      signals.push({
-        type,
-        pattern: label,
-        location: 'body_text',
-        excerpt: excerpt(normalized, match),
-      })
-    }
-  }
-
-  return signals
+  return runPatterns(rawText, 'body_text')
 }

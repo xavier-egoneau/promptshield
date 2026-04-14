@@ -110,7 +110,6 @@ export function clean(html: string): CleanResult {
   })
 
   const cleanedHtml = $.html()
-  const cleanedText = $.text().replace(/\s+/g, ' ').trim()
 
-  return { cleanedHtml, cleanedText, removed, attrSignals }
+  return { cleanedHtml, removed, attrSignals }
 }
