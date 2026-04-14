@@ -20,21 +20,42 @@ C'est une couche de réduction de risque qui :
 
 Entrée :
 - URL
-- éventuellement HTML brut plus tard
+- HTML brut
+- plus tard markdown, email ou OCR
 
 Sortie :
 - JSON structuré
 - texte nettoyé prêt pour un LLM
 - score de risque et signaux détectés
+- détails sur les éléments retirés ou marqués suspects
+
+## Approche de validation
+
+Le MVP doit être piloté par un corpus d'attaques et des tests, pas seulement par du code de fetch.
+
+Le projet doit inclure :
+- une taxonomie de prompt injections par niveaux et familles
+- une collection de fixtures HTML représentant des cas réels ou plausibles
+- des sorties attendues pour chaque cas
+- des tests automatiques de non-régression
+
+## Niveaux d'attaque envisagés
+
+- Niveau 1 : injections grossières et explicites
+- Niveau 2 : injections déguisées dans un contenu qui semble légitime
+- Niveau 3 : injections cachées dans le HTML ou les métadonnées
+- Niveau 4 : injections contextuelles mêlées au vrai contenu
+- Niveau 5 : attaques adversariales plus subtiles ou multi-blocs
 
 ## Pipeline MVP
 
-1. Fetch de la page
-2. Extraction reader-mode du contenu principal
-3. Nettoyage des éléments non utiles ou dangereux
-4. Détection heuristique de prompt injection
-5. Scoring de risque
-6. Génération d'une sortie structurée
+1. Charger une ressource ou une fixture HTML
+2. Extraire le contenu principal en reader-mode
+3. Nettoyer les éléments non utiles ou dangereux
+4. Détecter des signaux heuristiques de prompt injection
+5. Attribuer un score de risque
+6. Générer une sortie structurée
+7. Vérifier via tests que le contenu dangereux a été supprimé ou neutralisé avant passage au modèle
 
 ## Stack prévue
 
@@ -49,6 +70,8 @@ Sortie :
 
 ```bash
 promptshield fetch https://example.com/article
+promptshield inspect fixtures/html/level-1/basic-ignore-instructions.html
+promptshield test
 ```
 
 Sortie possible :
@@ -57,6 +80,7 @@ Sortie possible :
 - signaux détectés
 - texte nettoyé
 - JSON complet
+- résultat de test sur une fixture
 
 ## Cas d'usage
 

@@ -8,3 +8,4 @@
 - Positionnement assumé : couche défensive utile, pas protection parfaite.
 - Xavier veut quelque chose de proche d'un antivirus procédural pour injections de prompt, avant de redonner le contenu à l'IA.
 - La première version doit être un CLI local simple.
+- Xavier veut orienter le projet autour d'une collection de prompt injections HTML classées par niveaux, avec tests automatiques pour vérifier que le contenu dangereux est supprimé avant d'être donné au modèle.
